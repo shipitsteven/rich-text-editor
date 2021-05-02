@@ -15,6 +15,7 @@ import {
 import { Button, Tooltip } from 'antd';
 
 const RTE = () => {
+  // withHistory tracks editor history, use Ctrl + Z for undo, Ctrl + Y for redo
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
   // Add the initial value when setting up our state.
   const [value, setValue] = useState([

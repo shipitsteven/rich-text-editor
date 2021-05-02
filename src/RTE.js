@@ -4,6 +4,7 @@ import React, { useMemo, useState, useCallback } from 'react';
 import { createEditor, Transforms, Editor, Text } from 'slate';
 // Import the Slate components and React plugin.
 import { Slate, Editable, withReact } from 'slate-react';
+import { withHistory } from 'slate-history';
 import {
   BoldOutlined,
   ItalicOutlined,
@@ -14,7 +15,7 @@ import {
 import { Button, Tooltip } from 'antd';
 
 const RTE = () => {
-  const editor = useMemo(() => withReact(createEditor()), []);
+  const editor = useMemo(() => withHistory(withReact(createEditor())), []);
   // Add the initial value when setting up our state.
   const [value, setValue] = useState([
     {

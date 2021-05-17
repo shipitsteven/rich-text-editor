@@ -10,11 +10,28 @@ import { DefaultElement, CodeElement, Link } from './Element';
 import Leaf from './Leaf';
 import Toolbar from './Toolbar';
 import withLinks from './plugin/withLinks';
+import { EditListPlugin } from '@productboard/slate-edit-list';
+
+const options = {}; // additional options
+
+const [
+  withEditList, // applies normalization to editor
+  onKeyDown, // keyDown handler for keyboard shortcuts
+  { Editor, Element, Transforms }, // Slate classes with added utility functions and transforms this package provides
+] = EditListPlugin(options);
+
+const customOnKeyDown = (editor, event) => {
+  onKeyDown(editor);
+  if (event.key === '`' && event.ctrlKey) {
+    event.preventDefault();
+    CustomEditor.toggleCodeBlock(editor);
+  }
+};
 
 const RichTextEditor = () => {
   // withHistory tracks editor history, use Ctrl + Z for undo, Ctrl + Y for redo
   const editor = useMemo(
-    () => withLinks(withHistory(withReact(createEditor()))),
+    () => withEditList(withLinks(withHistory(withReact(createEditor())))),
     []
   );
   // Add the initial value when setting up our state.
@@ -41,6 +58,16 @@ const RichTextEditor = () => {
         return <CodeElement {...props} />;
       case 'link':
         return <Link {...props} />;
+      case 'ul_list':
+        return <ul {...props.attributes}>{props.children}</ul>;
+      case 'ol_list':
+        return <ol {...props.attributes}>{props.children}</ol>;
+
+      case 'list_item':
+        return <li {...props.attributes}>{props.children}</li>;
+
+      case 'heading':
+        return <h1 {...props.attributes}>{props.children}</h1>;
       default:
         return <DefaultElement {...props} />;
     }
@@ -51,6 +78,7 @@ const RichTextEditor = () => {
     return <Leaf {...props} />;
   }, []);
 
+  const inList = Editor.isSelectionInList(editor);
   return (
     <>
       <Slate
@@ -62,31 +90,20 @@ const RichTextEditor = () => {
         }}
       >
         <Toolbar editor={editor} />
+        <button
+          className={inList ? 'active' : ''}
+          onClick={() =>
+            inList
+              ? Transforms.unwrapList(editor)
+              : Transforms.wrapInList(editor)
+          }
+        >
+          List
+        </button>
         <Editable
           renderElement={renderElement}
           renderLeaf={renderLeaf}
-          onKeyDown={(event) => {
-            if (!event.ctrlKey) {
-              return;
-            }
-
-            // eslint-disable-next-line default-case
-            switch (event.key) {
-              // When "`" is pressed, keep our existing code block logic.
-              case '`': {
-                event.preventDefault();
-                CustomEditor.toggleCodeBlock(editor);
-                break;
-              }
-
-              // When "B" is pressed, bold the text in the selection.
-              case 'b': {
-                event.preventDefault();
-                CustomEditor.toggleBoldMark(editor);
-                break;
-              }
-            }
-          }}
+          onKeyDown={(event) => customOnKeyDown(editor, event)}
         />
       </Slate>
     </>

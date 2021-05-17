@@ -32,3 +32,11 @@
   color: rebeccapurple;
   cursor: pointer;
 }
+
+.active-style {
+  background-color: rgb(151, 215, 226);
+}
+
+.active-style:hover {
+  background-color: rgba(151, 215, 226, 0.6);
+}

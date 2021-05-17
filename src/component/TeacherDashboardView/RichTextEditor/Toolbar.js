@@ -1,4 +1,5 @@
-import React from "react";
+import React from 'react';
+import { useSlate } from 'slate-react';
 import {
   BoldOutlined,
   ItalicOutlined,
@@ -9,21 +10,32 @@ import {
   UndoOutlined,
   RedoOutlined,
   LinkOutlined,
-} from "@ant-design/icons";
-import { Button, Tooltip } from "antd";
-import CustomEditor from "./EditorLogic";
+} from '@ant-design/icons';
+import { Button, Tooltip } from 'antd';
+import CustomEditor from './EditorLogic';
+import './styles.css';
+
+// ---------------
+// import { Tag } from 'antd';
+// const { CheckableTag } = Tag;
 
 const Toolbar = ({ editor }) => {
   const handleInsertLink = (editor) => {
-    const userInput = prompt("Enter a URL"); // prompt the user for a link
+    const userInput = prompt('Enter a URL'); // prompt the user for a link
     CustomEditor.insertLink(editor, userInput);
   };
+  const valueEditor = useSlate();
 
   return (
     <>
       <Tooltip title="Bold">
         <Button
           icon={<BoldOutlined />}
+          className={
+            CustomEditor.isMarkActive(valueEditor, 'bold')
+              ? 'active-style'
+              : null
+          }
           onMouseDown={(event) => {
             event.preventDefault();
             CustomEditor.toggleBoldMark(editor);

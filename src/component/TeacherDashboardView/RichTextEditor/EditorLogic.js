@@ -1,15 +1,30 @@
-import { Transforms, Editor, Text, Path, Range, Element } from "slate";
-import { ReactEditor } from "slate-react";
+import { Transforms, Editor, Text, Path, Range, Element } from 'slate';
+import { ReactEditor } from 'slate-react';
 
 // CustomEditor is a namespace that extracts the logic out of the editor so it can be re-used by the Toolbar AND keyboard shortcuts
 const CustomEditor = {
   isBoldMarkActive(editor) {
     const [match] = Editor.nodes(editor, {
       match: (n) => n.bold === true,
-      universal: true,
+      // universal: true,
     });
 
     return !!match;
+  },
+
+  isMarkActive(editor, format) {
+    const marks = Editor.marks(editor);
+    return marks ? marks[format] === true : false;
+  },
+
+  toggleMark(editor, format) {
+    const isActive = this.isMarkActive(editor, format);
+
+    if (isActive) {
+      Editor.removeMark(editor, format);
+    } else {
+      Editor.addMark(editor, format, true);
+    }
   },
 
   isItalicMarkActive(editor) {
@@ -23,7 +38,7 @@ const CustomEditor = {
 
   isCodeBlockActive(editor) {
     const [match] = Editor.nodes(editor, {
-      match: (n) => n.type === "code",
+      match: (n) => n.type === 'code',
     });
 
     return !!match;
@@ -78,7 +93,7 @@ const CustomEditor = {
     const isActive = CustomEditor.isCodeBlockActive(editor);
     Transforms.setNodes(
       editor,
-      { type: isActive ? null : "code" },
+      { type: isActive ? null : 'code' },
       { match: (n) => Editor.isBlock(editor, n) }
     );
   },
@@ -113,15 +128,15 @@ const CustomEditor = {
   // Link specific logic
   createLinkNode(href, text) {
     return {
-      type: "link",
+      type: 'link',
       href,
       children: [{ text }],
     };
   },
 
-  createParagraphNode(children = [{ text: "" }]) {
+  createParagraphNode(children = [{ text: '' }]) {
     return {
-      type: "paragraph",
+      type: 'paragraph',
       children,
     };
   },
@@ -130,7 +145,7 @@ const CustomEditor = {
     return Transforms.unwrapNodes(editor, {
       ...opts,
       match: (n) =>
-        !Editor.isEditor(n) && Element.isElement(n) && n.type === "link",
+        !Editor.isEditor(n) && Element.isElement(n) && n.type === 'link',
     });
   },
 
@@ -138,7 +153,7 @@ const CustomEditor = {
     if (!url) return;
 
     const { selection } = editor;
-    const link = this.createLinkNode(url, "New Link");
+    const link = this.createLinkNode(url, 'New Link');
 
     ReactEditor.focus(editor);
 
@@ -150,7 +165,7 @@ const CustomEditor = {
 
       // Remove the Link node if we're inserting a new link node inside of another
       // link.
-      if (parentNode.type === "link") {
+      if (parentNode.type === 'link') {
         this.removeLink(editor);
       }
 
@@ -167,7 +182,7 @@ const CustomEditor = {
         // Wrap the currently selected range of text into a Link
         Transforms.wrapNodes(editor, link, { split: true });
         // Remove the highlight and move the cursor to the end of the highlight
-        Transforms.collapse(editor, { edge: "end" });
+        Transforms.collapse(editor, { edge: 'end' });
       }
     } else {
       // Insert the new link node at the bottom of the Editor when selection

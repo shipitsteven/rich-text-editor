@@ -10,16 +10,19 @@ import {
   UndoOutlined,
   RedoOutlined,
   LinkOutlined,
+  UnorderedListOutlined,
+  OrderedListOutlined,
 } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
 import CustomEditor from './EditorLogic';
 import './styles.css';
+import ListCommands from './commands/listCommands';
 
 // ---------------
 // import { Tag } from 'antd';
 // const { CheckableTag } = Tag;
 
-const Toolbar = ({ editor }) => {
+const Toolbar = ({ editor, listEditor, listTransforms }) => {
   const handleInsertLink = (editor) => {
     const userInput = prompt('Enter a URL'); // prompt the user for a link
     CustomEditor.insertLink(editor, userInput);
@@ -116,14 +119,24 @@ const Toolbar = ({ editor }) => {
           }}
         />
       </Tooltip>
-      {/* <Button
-        onMouseDown={(event) => {
-          event.preventDefault();
-          CustomEditor.removeLink(editor);
-        }}
-      >
-        Remove Link
-      </Button> */}
+      <Tooltip title="Bullet point list">
+        <Button
+          icon={<UnorderedListOutlined />}
+          onMouseDown={(event) => {
+            event.preventDefault();
+            ListCommands.toggleUL(listEditor, listTransforms, editor);
+          }}
+        />
+      </Tooltip>
+      <Tooltip title="Numbered list">
+        <Button
+          icon={<OrderedListOutlined />}
+          onMouseDown={(event) => {
+            event.preventDefault();
+            ListCommands.toggleOL(listEditor, listTransforms, editor);
+          }}
+        />
+      </Tooltip>
     </>
   );
 };

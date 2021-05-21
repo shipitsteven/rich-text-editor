@@ -1,32 +1,18 @@
-// Import React dependencies.
 import React, { useMemo, useState, useCallback } from 'react';
-// Import the Slate editor factory.
 import { createEditor } from 'slate';
-// Import the Slate components and React plugin.
 import { Slate, Editable, withReact } from 'slate-react';
 import { withHistory } from 'slate-history';
-import CustomEditor from './EditorLogic';
 import { DefaultElement, CodeElement, Link } from './Element';
 import Leaf from './Leaf';
 import Toolbar from './Toolbar';
 import withLinks from './plugin/withLinks';
 import { EditListPlugin } from '@productboard/slate-edit-list';
+import { customOnKeyDown } from './util/onKeyDown';
 
 const options = {}; // additional options
 
-const [
-  withEditList, // applies normalization to editor
-  onKeyDown, // keyDown handler for keyboard shortcuts
-  { Editor, Element, Transforms }, // Slate classes with added utility functions and transforms this package provides
-] = EditListPlugin(options);
-
-const customOnKeyDown = (editor, event) => {
-  onKeyDown(editor);
-  if (event.key === '`' && event.ctrlKey) {
-    event.preventDefault();
-    CustomEditor.toggleCodeBlock(editor);
-  }
-};
+const [withEditList, onKeyDown, { Editor, Transforms }] =
+  EditListPlugin(options);
 
 const RichTextEditor = () => {
   // withHistory tracks editor history, use Ctrl + Z for undo, Ctrl + Y for redo
@@ -62,12 +48,8 @@ const RichTextEditor = () => {
         return <ul {...props.attributes}>{props.children}</ul>;
       case 'ol_list':
         return <ol {...props.attributes}>{props.children}</ol>;
-
       case 'list_item':
         return <li {...props.attributes}>{props.children}</li>;
-
-      case 'heading':
-        return <h1 {...props.attributes}>{props.children}</h1>;
       default:
         return <DefaultElement {...props} />;
     }
@@ -78,7 +60,6 @@ const RichTextEditor = () => {
     return <Leaf {...props} />;
   }, []);
 
-  const inList = Editor.isSelectionInList(editor);
   return (
     <>
       <Slate
@@ -89,21 +70,17 @@ const RichTextEditor = () => {
           setValue(newValue);
         }}
       >
-        <Toolbar editor={editor} />
-        <button
-          className={inList ? 'active' : ''}
-          onClick={() =>
-            inList
-              ? Transforms.unwrapList(editor)
-              : Transforms.wrapInList(editor)
-          }
-        >
-          List
-        </button>
+        <Toolbar
+          editor={editor}
+          listEditor={Editor}
+          listTransforms={Transforms}
+        />
         <Editable
           renderElement={renderElement}
           renderLeaf={renderLeaf}
-          onKeyDown={(event) => customOnKeyDown(editor, event)}
+          onKeyDown={(event) => {
+            customOnKeyDown(onKeyDown(editor), event, editor);
+          }}
         />
       </Slate>
     </>

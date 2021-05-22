@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useSlate } from 'slate-react';
 import {
   BoldOutlined,
@@ -14,14 +14,10 @@ import {
   OrderedListOutlined,
   DownOutlined,
 } from '@ant-design/icons';
-import { Button, Tooltip, Divider, Dropdown, Menu } from 'antd';
+import { Button, Tooltip, Divider, Dropdown } from 'antd';
 import CustomEditor from './EditorLogic';
 import './styles.css';
 import ListCommands from './commands/listCommands';
-
-// ---------------
-// import { Tag } from 'antd';
-// const { CheckableTag } = Tag;
 
 const Toolbar = ({
   editor,

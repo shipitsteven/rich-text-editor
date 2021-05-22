@@ -36,6 +36,11 @@ const RichTextEditor = () => {
     },
   ]);
 
+  const [hlColor, setHlColor] = useState('#fcba03');
+  const handleHlColor = (event) => {
+    setHlColor(event.target.value);
+  };
+
   // Define a rendering function based on the element passed to `props`. We use
   // `useCallback` here to memoize the function for subsequent renders.
   const renderElement = useCallback((props) => {
@@ -56,9 +61,13 @@ const RichTextEditor = () => {
   }, []);
 
   // Define a leaf rendering function that is memoized with `useCallback`.
-  const renderLeaf = useCallback((props) => {
-    return <Leaf {...props} />;
-  }, []);
+  const renderLeaf = useCallback(
+    (props) => {
+      let withColor = { ...props, hlColor };
+      return <Leaf props={withColor} />;
+    },
+    [hlColor]
+  );
 
   return (
     <>
@@ -74,6 +83,8 @@ const RichTextEditor = () => {
           editor={editor}
           listEditor={Editor}
           listTransforms={Transforms}
+          hlColor={hlColor}
+          handleHlColor={handleHlColor.bind(this)}
         />
         <Editable
           renderElement={renderElement}

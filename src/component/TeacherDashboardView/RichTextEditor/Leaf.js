@@ -1,7 +1,10 @@
-import React from "react";
+import React from 'react';
 
 // Leaf = HTML inline elements
-const Leaf = ({ attributes, children, leaf }) => {
+const Leaf = ({ props }) => {
+  const { leaf } = props;
+  let { attributes, children } = props;
+
   if (leaf.bold) {
     children = <strong>{children}</strong>;
   }
@@ -15,15 +18,15 @@ const Leaf = ({ attributes, children, leaf }) => {
   }
 
   if (leaf.underline) {
-    attributes = { ...attributes, style: { textDecoration: "underline" } };
+    attributes = { ...attributes, style: { textDecoration: 'underline' } };
   }
 
   if (leaf.highlight) {
-    children = <mark>{children}</mark>;
+    attributes = { ...attributes, style: { backgroundColor: `${leaf.color}` } };
   }
 
   if (leaf.strikethrough) {
-    attributes = { ...attributes, style: { textDecoration: "line-through" } };
+    attributes = { ...attributes, style: { textDecoration: 'line-through' } };
   }
 
   return <span {...attributes}>{children}</span>;

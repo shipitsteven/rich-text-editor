@@ -111,11 +111,14 @@ const CustomEditor = {
     );
   },
 
-  toggleHighlightMark(editor) {
+  toggleHighlightMark(editor, color) {
     const isActive = CustomEditor.isHighlightActive(editor);
     Transforms.setNodes(
       editor,
-      { highlight: isActive ? null : true },
+      {
+        highlight: isActive ? null : true,
+        color: isActive ? null : color,
+      },
       { match: (n) => Text.isText(n), split: true }
     );
   },

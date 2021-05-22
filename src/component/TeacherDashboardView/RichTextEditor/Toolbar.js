@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { useSlate } from 'slate-react';
 import {
   BoldOutlined,
@@ -12,8 +12,9 @@ import {
   LinkOutlined,
   UnorderedListOutlined,
   OrderedListOutlined,
+  DownOutlined,
 } from '@ant-design/icons';
-import { Button, Tooltip } from 'antd';
+import { Button, Tooltip, Divider, Dropdown, Menu } from 'antd';
 import CustomEditor from './EditorLogic';
 import './styles.css';
 import ListCommands from './commands/listCommands';
@@ -22,12 +23,24 @@ import ListCommands from './commands/listCommands';
 // import { Tag } from 'antd';
 // const { CheckableTag } = Tag;
 
-const Toolbar = ({ editor, listEditor, listTransforms }) => {
+const Toolbar = ({
+  editor,
+  listEditor,
+  listTransforms,
+  hlColor,
+  handleHlColor,
+}) => {
   const handleInsertLink = (editor) => {
     const userInput = prompt('Enter a URL'); // prompt the user for a link
     CustomEditor.insertLink(editor, userInput);
   };
   const valueEditor = useSlate();
+
+  const [hlColorVisible, setHlColorVisible] = useState(false);
+  const handleHlVisible = (flag) => setHlColorVisible(flag);
+  const colorPicker = (
+    <input type="color" value={hlColor} onChange={handleHlColor} />
+  );
 
   return (
     <>
@@ -61,15 +74,6 @@ const Toolbar = ({ editor, listEditor, listTransforms }) => {
           onMouseDown={(event) => {
             event.preventDefault();
             CustomEditor.toggleUnderlineMark(editor);
-          }}
-        />
-      </Tooltip>
-      <Tooltip title="Highlight">
-        <Button
-          icon={<HighlightOutlined />}
-          onMouseDown={(event) => {
-            event.preventDefault();
-            CustomEditor.toggleHighlightMark(editor);
           }}
         />
       </Tooltip>
@@ -137,6 +141,29 @@ const Toolbar = ({ editor, listEditor, listTransforms }) => {
           }}
         />
       </Tooltip>
+      <Divider type="vertical" />
+      <Tooltip title="Highlight">
+        <Button
+          icon={<HighlightOutlined />}
+          onMouseDown={(event) => {
+            event.preventDefault();
+            CustomEditor.toggleHighlightMark(editor, hlColor);
+          }}
+        ></Button>
+      </Tooltip>
+      <Dropdown
+        overlay={colorPicker}
+        visible={hlColorVisible}
+        onVisibleChange={handleHlVisible}
+      >
+        <Tooltip title="Change highlight color">
+          <Button
+            icon={<DownOutlined />}
+            style={{ backgroundColor: `${hlColor}` }}
+          />
+        </Tooltip>
+      </Dropdown>
+      <Divider type="vertical" />
     </>
   );
 };

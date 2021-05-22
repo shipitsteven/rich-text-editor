@@ -40,3 +40,22 @@
 .active-style:hover {
   background-color: rgba(151, 215, 226, 0.6);
 }
+
+input[type='color']:focus {
+  outline: none !important;
+  border: 0px;
+  box-shadow: 0;
+}
+
+input[type='color'] {
+  outline: none !important;
+  border: 0px;
+  width: 2em;
+  height: 2em;
+  transform: translateY(0.25em);
+  background: transparent;
+}
+
+input[type='color' i] {
+  padding: 0;
+}

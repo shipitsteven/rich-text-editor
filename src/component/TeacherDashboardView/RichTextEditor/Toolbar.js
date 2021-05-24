@@ -13,6 +13,7 @@ import {
   UnorderedListOutlined,
   OrderedListOutlined,
   DownOutlined,
+  FileImageOutlined,
 } from '@ant-design/icons';
 import { Button, Tooltip, Divider, Dropdown } from 'antd';
 import CustomEditor from './EditorLogic';
@@ -40,6 +41,11 @@ const Toolbar = ({
 
   return (
     <>
+      <Dropdown overlay={() => <input type="file" />}>
+        <Tooltip title="Images">
+          <Button icon={<FileImageOutlined />} />
+        </Tooltip>
+      </Dropdown>
       <Tooltip title="Bold">
         <Button
           icon={<BoldOutlined />}

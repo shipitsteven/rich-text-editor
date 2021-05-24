@@ -8,6 +8,18 @@ import Toolbar from './Toolbar';
 import withLinks from './plugin/withLinks';
 import { EditListPlugin } from '@productboard/slate-edit-list';
 import { customOnKeyDown } from './util/onKeyDown';
+import firebase from 'firebase/app';
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyBNTkJXewdc-uGCHudyXnJxGB0I1QnZbRQ',
+  authDomain: 'rich-text-cb905.firebaseapp.com',
+  projectId: 'rich-text-cb905',
+  storageBucket: 'rich-text-cb905.appspot.com',
+  messagingSenderId: '840547243181',
+  appId: '1:840547243181:web:5beb56b5db7becafd56224',
+};
+
+firebase.initializeApp(firebaseConfig);
 
 const options = {}; // additional options
 
@@ -77,6 +89,7 @@ const RichTextEditor = () => {
         onChange={(newValue) => {
           console.log(newValue);
           setValue(newValue);
+          console.log(firebase);
         }}
       >
         <Toolbar

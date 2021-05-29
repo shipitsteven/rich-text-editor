@@ -19,6 +19,7 @@ import { Button, Tooltip, Divider, Dropdown } from 'antd';
 import CustomEditor from './EditorLogic';
 import './styles.css';
 import ListCommands from './commands/listCommands';
+import ImageCommands from './commands/imageCommands';
 
 const Toolbar = ({
   editor,
@@ -39,9 +40,30 @@ const Toolbar = ({
     <input type="color" value={hlColor} onChange={handleHlColor} />
   );
 
+  const failureFxn = () => {
+    console.log('Failure function called');
+  };
+
   return (
     <>
-      <Dropdown overlay={() => <input type="file" />}>
+      <Dropdown
+        overlay={() => (
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              let imageInfo = {
+                metadata: {
+                  contentType: 'image/*',
+                },
+                newImageId: e.target.files[0].name,
+                image: e.target.files[0],
+              };
+              ImageCommands.addImageToStorage(imageInfo, failureFxn);
+            }}
+          />
+        )}
+      >
         <Tooltip title="Images">
           <Button icon={<FileImageOutlined />} />
         </Tooltip>

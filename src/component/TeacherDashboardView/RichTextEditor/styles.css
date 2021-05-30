@@ -59,3 +59,9 @@ input[type='color'] {
 input[type='color' i] {
   padding: 0;
 }
+
+.image-in-editor {
+  display: block;
+  max-width: 100%;
+  max-height: 20em;
+}

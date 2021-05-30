@@ -1,5 +1,9 @@
 import firebase from 'firebase/app';
 import 'firebase/storage';
+import { Transforms } from 'slate';
+import isUrl from 'is-url';
+const imageExtensions = require('../util/imageExtensions.json');
+
 const fileName = './commands/imageCommands.js';
 var storage = 'Dev';
 
@@ -64,6 +68,22 @@ const ImageCommands = {
       .ref(storage + `/Images/${imageName}_${uniqueID}`)
       .getDownloadURL();
     return imageURL;
+  },
+
+  insertImage(editor, url) {
+    const text = { text: '' };
+    const image = [
+      { type: 'image', url, children: [text] },
+      { type: 'paragraph', children: [text] },
+    ];
+    Transforms.insertNodes(editor, image);
+  },
+
+  isImageUrl(url) {
+    if (!url) return false;
+    if (!isUrl(url)) return false;
+    const ext = new URL(url).pathname.split('.').pop();
+    return imageExtensions.includes(ext);
   },
 };
 

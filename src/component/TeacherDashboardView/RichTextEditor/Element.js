@@ -1,7 +1,7 @@
-import React from "react";
-import CustomEditor from "./EditorLogic";
-import "./styles.css";
-import { useSlateStatic, useSelected, useFocused } from "slate-react";
+import React from 'react';
+import CustomEditor from './EditorLogic';
+import './styles.css';
+import { useSlateStatic, useSelected, useFocused } from 'slate-react';
 
 // Element = HTML block elements
 const CodeElement = (props) => {
@@ -43,4 +43,24 @@ const Link = ({ attributes, element, children }) => {
   );
 };
 
-export { CodeElement, DefaultElement, Link };
+const Image = ({ attributes, children, element }) => {
+  const selected = useSelected();
+  const focused = useFocused();
+  return (
+    <div {...attributes}>
+      <div contentEditable={false}>
+        <img
+          src={element.url}
+          className="image-in-editor"
+          style={{
+            boxShadow: `${selected && focused ? '0 0 0 3px #B4D5FF' : 'none'}`,
+          }}
+          alt="placeholder"
+        />
+      </div>
+      {children}
+    </div>
+  );
+};
+
+export { CodeElement, DefaultElement, Link, Image };

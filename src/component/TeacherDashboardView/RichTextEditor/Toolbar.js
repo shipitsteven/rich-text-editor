@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSlate } from 'slate-react';
 import {
   BoldOutlined,
@@ -14,6 +14,7 @@ import {
   OrderedListOutlined,
   DownOutlined,
   FileImageOutlined,
+  CameraOutlined,
 } from '@ant-design/icons';
 import { Button, Tooltip, Divider, Dropdown } from 'antd';
 import CustomEditor from './EditorLogic';
@@ -34,8 +35,6 @@ const Toolbar = ({
   };
   const valueEditor = useSlate();
 
-  const [hlColorVisible, setHlColorVisible] = useState(false);
-  const handleHlVisible = (flag) => setHlColorVisible(flag);
   const colorPicker = (
     <input type="color" value={hlColor} onChange={handleHlColor} />
   );
@@ -46,6 +45,18 @@ const Toolbar = ({
 
   return (
     <>
+      <Button
+        onMouseDown={(event) => {
+          event.preventDefault();
+          const url = window.prompt('Enter the URL of the image:');
+          if (url && !ImageCommands.isImageUrl(url)) {
+            alert('URL is not an image');
+            return;
+          }
+          ImageCommands.insertImage(editor, url);
+        }}
+        icon={<CameraOutlined />}
+      />
       <Dropdown
         overlay={() => (
           <input
@@ -175,18 +186,15 @@ const Toolbar = ({
           }}
         ></Button>
       </Tooltip>
-      <Dropdown
-        overlay={colorPicker}
-        visible={hlColorVisible}
-        onVisibleChange={handleHlVisible}
-      >
-        <Tooltip title="Change highlight color">
+      <Tooltip title="Change highlight color">
+        <Dropdown overlay={colorPicker}>
           <Button
             icon={<DownOutlined />}
             style={{ backgroundColor: `${hlColor}` }}
           />
-        </Tooltip>
-      </Dropdown>
+        </Dropdown>
+      </Tooltip>
+      {colorPicker}
       <Divider type="vertical" />
     </>
   );

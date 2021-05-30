@@ -2,10 +2,11 @@ import React, { useMemo, useState, useCallback } from 'react';
 import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import { withHistory } from 'slate-history';
-import { DefaultElement, CodeElement, Link } from './Element';
+import { DefaultElement, CodeElement, Link, Image } from './Element';
 import Leaf from './Leaf';
 import Toolbar from './Toolbar';
 import withLinks from './plugin/withLinks';
+import withImages from './plugin/withImages';
 import { EditListPlugin } from '@productboard/slate-edit-list';
 import { customOnKeyDown } from './util/onKeyDown';
 
@@ -17,7 +18,10 @@ const [withEditList, onKeyDown, { Editor, Transforms }] =
 const RichTextEditor = () => {
   // withHistory tracks editor history, use Ctrl + Z for undo, Ctrl + Y for redo
   const editor = useMemo(
-    () => withEditList(withLinks(withHistory(withReact(createEditor())))),
+    () =>
+      withImages(
+        withEditList(withLinks(withHistory(withReact(createEditor()))))
+      ),
     []
   );
   // Add the initial value when setting up our state.
@@ -55,6 +59,8 @@ const RichTextEditor = () => {
         return <ol {...props.attributes}>{props.children}</ol>;
       case 'list_item':
         return <li {...props.attributes}>{props.children}</li>;
+      case 'image':
+        return <Image {...props} />;
       default:
         return <DefaultElement {...props} />;
     }

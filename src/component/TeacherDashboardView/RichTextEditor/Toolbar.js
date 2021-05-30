@@ -86,14 +86,14 @@ const Toolbar = ({
           <input
             type="file"
             accept="image/*"
-            onChange={async (e) => {
+            onChange={async (event) => {
               ImageCommands.uploadAndDisplay(
-                e,
+                event,
                 editor,
                 failureFxn,
                 handleUpload.bind(this)
               );
-              e.target.value = '';
+              event.target.value = '';
             }}
           />
         )}
@@ -149,7 +149,7 @@ const Toolbar = ({
           icon={<CodeOutlined />}
           onMouseDown={(event) => {
             event.preventDefault();
-            CustomEditor.toggleCodeBlock(editor);
+            CustomEditor.toggleBlock(editor, 'code');
           }}
         />
       </Tooltip>

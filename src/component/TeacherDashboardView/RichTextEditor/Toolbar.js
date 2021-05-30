@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSlate } from 'slate-react';
 import {
   BoldOutlined,
@@ -16,7 +16,7 @@ import {
   FileImageOutlined,
   CameraOutlined,
 } from '@ant-design/icons';
-import { Button, Tooltip, Divider, Dropdown } from 'antd';
+import { Button, Tooltip, Divider, Dropdown, Progress } from 'antd';
 import CustomEditor from './EditorLogic';
 import './styles.css';
 import ListCommands from './commands/listCommands';
@@ -29,11 +29,29 @@ const Toolbar = ({
   hlColor,
   handleHlColor,
 }) => {
-  const handleInsertLink = (editor) => {
-    const userInput = prompt('Enter a URL'); // prompt the user for a link
-    CustomEditor.insertLink(editor, userInput);
-  };
   const valueEditor = useSlate();
+
+  const [uploadStatus, setUploadStatus] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  // TODO: handle error states
+
+  const handleUpload = (snapshot) => {
+    if (snapshot.totalBytes) {
+      setUploadStatus(true);
+      getUploadProgress(
+        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+      );
+      if (snapshot.bytesTransferred === snapshot.totalBytes) {
+        setTimeout(() => {
+          setUploadStatus(false);
+        }, 1000);
+      }
+    }
+  };
+
+  const getUploadProgress = (percent) => {
+    setUploadProgress(percent);
+  };
 
   const colorPicker = (
     <input type="color" value={hlColor} onChange={handleHlColor} />
@@ -45,6 +63,12 @@ const Toolbar = ({
 
   return (
     <>
+      <Progress
+        className={uploadStatus ? null : 'hidden'}
+        size="small"
+        percent={uploadProgress}
+        showUploadProgress={uploadStatus}
+      />
       <Button
         onMouseDown={(event) => {
           event.preventDefault();
@@ -62,15 +86,14 @@ const Toolbar = ({
           <input
             type="file"
             accept="image/*"
-            onChange={(e) => {
-              let imageInfo = {
-                metadata: {
-                  contentType: 'image/*',
-                },
-                newImageId: e.target.files[0].name,
-                image: e.target.files[0],
-              };
-              ImageCommands.addImageToStorage(imageInfo, failureFxn);
+            onChange={async (e) => {
+              ImageCommands.uploadAndDisplay(
+                e,
+                editor,
+                failureFxn,
+                handleUpload.bind(this)
+              );
+              e.target.value = '';
             }}
           />
         )}
@@ -154,7 +177,7 @@ const Toolbar = ({
           icon={<LinkOutlined />}
           onMouseDown={(event) => {
             event.preventDefault();
-            handleInsertLink(editor);
+            CustomEditor.handleInsertLink(editor);
           }}
         />
       </Tooltip>

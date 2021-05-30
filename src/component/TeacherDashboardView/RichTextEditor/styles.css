@@ -64,4 +64,9 @@ input[type='color' i] {
   display: block;
   max-width: 100%;
   max-height: 20em;
+  margin-bottom: 0.5em;
+}
+
+.hidden {
+  display: none;
 }

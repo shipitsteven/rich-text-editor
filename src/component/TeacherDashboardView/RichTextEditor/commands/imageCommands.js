@@ -4,7 +4,6 @@ import { Transforms } from 'slate';
 import isUrl from 'is-url';
 const imageExtensions = require('../util/imageExtensions.json');
 
-const fileName = './commands/imageCommands.js';
 var storage = 'Dev';
 
 const firebaseConfig = {
@@ -19,8 +18,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const ImageCommands = {
-  addImageToStorage: async (imageInfo, failure) => {
-    console.log(imageInfo);
+  addImageToStorage: async (imageInfo, failure, updateUI) => {
     let { metaData, newImageId, image } = imageInfo;
     let uniqueID = Date.now();
     return new Promise((resolve, reject) => {
@@ -32,24 +30,25 @@ const ImageCommands = {
       uploadTask.on(
         'state_changed',
         (snapshot) => {
+          console.log((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
           // progress function ....
+          updateUI(snapshot);
         },
         (error) => {
           // error function ....
           failure();
-          ImageCommands.reportError(
-            error,
-            fileName,
-            'addImageToStorage',
-            'FeedbackView'
-          );
           reject({ type: 'error_uploading', data: error });
         },
-        () => {
+        async () => {
           // complete function .....
-          resolve({ type: 'upload_success', data: 'upload successful' });
+          resolve({
+            type: 'upload_success',
+            data: 'upload successful',
+            url: await ImageCommands.getImageUrl(newImageId, uniqueID),
+          });
           // TODO: need to pass this up somewhere
-          ImageCommands.getImageUrl(newImageId, uniqueID);
+          // let url = await ImageCommands.getImageUrl(newImageId, uniqueID);
+          // return url;
         }
       );
     });
@@ -84,6 +83,24 @@ const ImageCommands = {
     if (!isUrl(url)) return false;
     const ext = new URL(url).pathname.split('.').pop();
     return imageExtensions.includes(ext);
+  },
+
+  async uploadAndDisplay(event, editor, failure, updateUI) {
+    let imageInfo = {
+      metadata: {
+        contentType: 'image/*',
+      },
+      newImageId: event.target.files[0].name,
+      image: event.target.files[0],
+    };
+    let uploadResult = await ImageCommands.addImageToStorage(
+      imageInfo,
+      failure,
+      updateUI
+    );
+    if (uploadResult.type === 'upload_success') {
+      ImageCommands.insertImage(editor, uploadResult.url);
+    }
   },
 };
 

@@ -132,6 +132,11 @@ const CustomEditor = {
     );
   },
 
+  handleInsertLink(editor) {
+    const userInput = prompt('Enter a URL'); // prompt the user for a link
+    CustomEditor.insertLink(editor, userInput);
+  },
+
   // Link specific logic
   createLinkNode(href, text) {
     return {

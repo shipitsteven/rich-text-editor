@@ -48,7 +48,7 @@ const Image = ({ attributes, children, element }) => {
   const focused = useFocused();
   return (
     <div {...attributes}>
-      <div contentEditable={false}>
+      <div>
         <img
           src={element.url}
           className="image-in-editor"

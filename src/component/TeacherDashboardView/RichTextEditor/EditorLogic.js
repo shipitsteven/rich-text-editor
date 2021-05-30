@@ -32,7 +32,6 @@ const CustomEditor = {
       match: (n) =>
         !Editor.isEditor(n) && Element.isElement(n) && n.type === format,
     });
-
     return !!match;
   },
 
@@ -42,17 +41,18 @@ const CustomEditor = {
     const isList = [LIST_TYPES].includes(format);
 
     Transforms.unwrapNodes(editor, {
-      match: (n) => !Editor.isEditor(n) && Element.isElement(n) && n.type,
+      match: (n) =>
+        LIST_TYPES.includes(
+          !Editor.isEditor(n) && Element.isElement(n) && n.type
+        ),
       split: true,
     });
     const newProperties = {
       type: isActive ? 'paragraph' : isList ? 'list-item' : format,
     };
-
     Transforms.setNodes(editor, newProperties);
 
-    // TODO replace children:[]
-    if (!isActive) {
+    if (!isActive && isList) {
       const block = { type: format, children: [] };
       Transforms.wrapNodes(editor, block);
     }

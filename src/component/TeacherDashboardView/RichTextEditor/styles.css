@@ -91,3 +91,28 @@ input[type='color' i] {
 .hidden {
   display: none;
 }
+
+input[type='file'] {
+  background-color: lightslategray;
+  padding: 1.5em 0 1.5em 2em;
+  transform: translateX(-3em);
+}
+
+.middle-aligned {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.left-aligned {
+  display: flex;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.right-aligned {
+  display: flex;
+  justify-content: flex-end;
+  text-align: right;
+}

@@ -44,15 +44,15 @@ const Link = ({ attributes, element, children }) => {
 };
 
 const MiddleAligned = (props) => {
-  return <p style={{ textAlign: 'center' }}>{props.children}</p>;
+  return <div className="middle-aligned">{props.children}</div>;
 };
 
 const LeftAligned = (props) => {
-  return <p style={{ textAlign: 'left' }}>{props.children}</p>;
+  return <div className="left-aligned">{props.children}</div>;
 };
 
 const RightAligned = (props) => {
-  return <p style={{ textAlign: 'right' }}>{props.children}</p>;
+  return <div className="right-aligned">{props.children}</div>;
 };
 
 const Image = ({ attributes, children, element }) => {

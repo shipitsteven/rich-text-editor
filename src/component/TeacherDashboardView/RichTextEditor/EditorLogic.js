@@ -35,6 +35,31 @@ const CustomEditor = {
     return !!match;
   },
 
+  toggleAlignment(editor, alignment) {
+    const isActive = CustomEditor.isAlignmentActive(editor);
+    if (!isActive) {
+      Transforms.wrapNodes(
+        editor,
+        { type: isActive ? null : alignment },
+        { match: (n) => Editor.isBlock(editor, n) }
+      );
+    } else {
+      const [match] = Editor.nodes(editor, {
+        match: (n) => n.type === 'image',
+      });
+      Transforms.setNodes(editor, {
+        type: match ? 'image' : 'paragraph',
+      });
+      Transforms.unwrapNodes(editor, {
+        match: (n) =>
+          !Editor.isEditor(n) &&
+          Element.isElement(n) &&
+          ['middle_aligned', 'left_aligned', 'right_aligned'].includes(n.type),
+        split: true,
+      });
+    }
+  },
+
   toggleBlock(editor, format) {
     const isActive = CustomEditor.isBlockActive(editor, format);
     const LIST_TYPES = ['ol_list', 'ul_list'];
@@ -100,6 +125,13 @@ const CustomEditor = {
     });
 
     return !!match;
+  },
+
+  isAlignmentActive(editor) {
+    let middle = this.isBlockActive(editor, 'middle_aligned');
+    let left = this.isBlockActive(editor, 'left_aligned');
+    let right = this.isBlockActive(editor, 'right_aligned');
+    return middle || left || right;
   },
 
   toggleBoldMark(editor) {

@@ -12,10 +12,12 @@ import {
   LinkOutlined,
   UnorderedListOutlined,
   OrderedListOutlined,
-  DownOutlined,
   FileImageOutlined,
   BgColorsOutlined,
   CameraOutlined,
+  AlignCenterOutlined,
+  AlignLeftOutlined,
+  AlignRightOutlined,
 } from '@ant-design/icons';
 import { Button, Tooltip, Divider, Dropdown, Progress } from 'antd';
 import CustomEditor from './EditorLogic';
@@ -75,39 +77,41 @@ const Toolbar = ({
         percent={uploadProgress}
         showUploadProgress={uploadStatus}
       />
-      <Button
-        onMouseDown={(event) => {
-          event.preventDefault();
-          const url = window.prompt('Enter the URL of the image:');
-          if (url && !ImageCommands.isImageUrl(url)) {
-            alert('URL is not an image');
-            return;
-          }
-          ImageCommands.insertImage(editor, url);
-        }}
-        icon={<CameraOutlined />}
-      />
-      <Dropdown
-        overlay={() => (
-          <input
-            type="file"
-            accept="image/*"
-            onChange={async (event) => {
-              ImageCommands.uploadAndDisplay(
-                event,
-                editor,
-                failureFxn,
-                handleUpload.bind(this)
-              );
-              event.target.value = '';
-            }}
-          />
-        )}
-      >
-        <Tooltip title="Images">
+      <Tooltip title="Add image via URL">
+        <Button
+          onMouseDown={(event) => {
+            event.preventDefault();
+            const url = window.prompt('Enter the URL of the image:');
+            if (url && !ImageCommands.isImageUrl(url)) {
+              alert('URL is not an image');
+              return;
+            }
+            ImageCommands.insertImage(editor, url);
+          }}
+          icon={<CameraOutlined />}
+        />
+      </Tooltip>
+      <Tooltip title="Upload image">
+        <Dropdown
+          overlay={() => (
+            <input
+              type="file"
+              accept="image/*"
+              onChange={async (event) => {
+                ImageCommands.uploadAndDisplay(
+                  event,
+                  editor,
+                  failureFxn,
+                  handleUpload.bind(this)
+                );
+                event.target.value = '';
+              }}
+            />
+          )}
+        >
           <Button icon={<FileImageOutlined />} />
-        </Tooltip>
-      </Dropdown>
+        </Dropdown>
+      </Tooltip>
       <Tooltip title="Bold">
         <Button
           icon={<BoldOutlined />}
@@ -202,6 +206,33 @@ const Toolbar = ({
           onMouseDown={(event) => {
             event.preventDefault();
             ListCommands.toggleOL(listEditor, listTransforms, editor);
+          }}
+        />
+      </Tooltip>
+      <Tooltip title="Left Align">
+        <Button
+          icon={<AlignLeftOutlined />}
+          onMouseDown={(event) => {
+            event.preventDefault();
+            CustomEditor.toggleAlignment(editor, 'left_aligned');
+          }}
+        />
+      </Tooltip>
+      <Tooltip title="Center Align">
+        <Button
+          icon={<AlignCenterOutlined />}
+          onMouseDown={(event) => {
+            event.preventDefault();
+            CustomEditor.toggleAlignment(editor, 'middle_aligned');
+          }}
+        />
+      </Tooltip>
+      <Tooltip title="Right Align">
+        <Button
+          icon={<AlignRightOutlined />}
+          onMouseDown={(event) => {
+            event.preventDefault();
+            CustomEditor.toggleAlignment(editor, 'right_aligned');
           }}
         />
       </Tooltip>

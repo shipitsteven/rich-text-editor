@@ -14,6 +14,7 @@ import {
   OrderedListOutlined,
   DownOutlined,
   FileImageOutlined,
+  BgColorsOutlined,
 } from '@ant-design/icons';
 import { Button, Tooltip, Divider, Dropdown } from 'antd';
 import CustomEditor from './EditorLogic';
@@ -26,6 +27,8 @@ const Toolbar = ({
   listTransforms,
   hlColor,
   handleHlColor,
+  handleTextColor,
+  textColor,
 }) => {
   const handleInsertLink = (editor) => {
     const userInput = prompt('Enter a URL'); // prompt the user for a link
@@ -33,10 +36,12 @@ const Toolbar = ({
   };
   const valueEditor = useSlate();
 
-  const [hlColorVisible, setHlColorVisible] = useState(false);
-  const handleHlVisible = (flag) => setHlColorVisible(flag);
-  const colorPicker = (
+  const highlightColorPicker = (
     <input type="color" value={hlColor} onChange={handleHlColor} />
+  );
+
+  const textColorPicker = (
+    <input type="color" value={textColor} onChange={handleTextColor} />
   );
 
   return (
@@ -151,20 +156,20 @@ const Toolbar = ({
             event.preventDefault();
             CustomEditor.toggleHighlightMark(editor, hlColor);
           }}
-        ></Button>
+        />
       </Tooltip>
-      <Dropdown
-        overlay={colorPicker}
-        visible={hlColorVisible}
-        onVisibleChange={handleHlVisible}
-      >
-        <Tooltip title="Change highlight color">
-          <Button
-            icon={<DownOutlined />}
-            style={{ backgroundColor: `${hlColor}` }}
-          />
-        </Tooltip>
-      </Dropdown>
+      <Tooltip title="Change Highlight Color">{highlightColorPicker}</Tooltip>
+      <Divider type="vertical" />
+      <Tooltip title="Color">
+        <Button
+          icon={<BgColorsOutlined />}
+          onMouseDown={(event) => {
+            event.preventDefault();
+            CustomEditor.toggleColor(editor, textColor);
+          }}
+        />
+      </Tooltip>
+      <Tooltip title="Change Text Color">{textColorPicker}</Tooltip>
       <Divider type="vertical" />
     </>
   );

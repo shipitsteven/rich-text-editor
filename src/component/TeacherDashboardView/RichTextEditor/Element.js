@@ -1,7 +1,7 @@
-import React from "react";
-import CustomEditor from "./EditorLogic";
-import "./styles.css";
-import { useSlateStatic, useSelected, useFocused } from "slate-react";
+import React from 'react';
+import CustomEditor from './EditorLogic';
+import './styles.css';
+import { useSlateStatic, useSelected, useFocused } from 'slate-react';
 
 // Element = HTML block elements
 const CodeElement = (props) => {
@@ -43,4 +43,23 @@ const Link = ({ attributes, element, children }) => {
   );
 };
 
-export { CodeElement, DefaultElement, Link };
+const MiddleAligned = (props) => {
+  return <p style={{ textAlign: 'center' }}>{props.children}</p>;
+};
+
+const LeftAligned = (props) => {
+  return <p style={{ textAlign: 'left' }}>{props.children}</p>;
+};
+
+const RightAligned = (props) => {
+  return <p style={{ textAlign: 'right' }}>{props.children}</p>;
+};
+
+export {
+  CodeElement,
+  MiddleAligned,
+  LeftAligned,
+  RightAligned,
+  DefaultElement,
+  Link,
+};

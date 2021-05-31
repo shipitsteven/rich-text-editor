@@ -2,7 +2,13 @@ import React, { useMemo, useState, useCallback } from 'react';
 import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import { withHistory } from 'slate-history';
-import { DefaultElement, CodeElement, Link } from './Element';
+import {
+  DefaultElement,
+  CodeElement,
+  MiddleAligned,
+  LeftAligned,
+  RightAligned,
+} from './Element';
 import Leaf from './Leaf';
 import Toolbar from './Toolbar';
 import withLinks from './plugin/withLinks';
@@ -52,6 +58,10 @@ const RichTextEditor = () => {
   const handleHlColor = (event) => {
     setHlColor(event.target.value);
   };
+  const [textColor, setTextColor] = useState('#6495ed');
+  const handleTextColor = (event) => {
+    setTextColor(event.target.value);
+  };
 
   // Define a rendering function based on the element passed to `props`. We use
   // `useCallback` here to memoize the function for subsequent renders.
@@ -59,8 +69,12 @@ const RichTextEditor = () => {
     switch (props.element.type) {
       case 'code':
         return <CodeElement {...props} />;
-      case 'link':
-        return <Link {...props} />;
+      case 'middle_aligned':
+        return <MiddleAligned {...props} />;
+      case 'left_aligned':
+        return <LeftAligned {...props} />;
+      case 'right_aligned':
+        return <RightAligned {...props} />;
       case 'ul_list':
         return <ul {...props.attributes}>{props.children}</ul>;
       case 'ol_list':
@@ -75,10 +89,10 @@ const RichTextEditor = () => {
   // Define a leaf rendering function that is memoized with `useCallback`.
   const renderLeaf = useCallback(
     (props) => {
-      let withColor = { ...props, hlColor };
-      return <Leaf props={withColor} />;
+      let withColors = { ...props, hlColor, textColor };
+      return <Leaf props={withColors} />;
     },
-    [hlColor]
+    [hlColor, textColor]
   );
 
   return (
@@ -89,23 +103,33 @@ const RichTextEditor = () => {
         onChange={(newValue) => {
           console.log(newValue);
           setValue(newValue);
-          console.log(firebase);
         }}
       >
         <Toolbar
           editor={editor}
+          handleTextColor={handleTextColor.bind(this)}
+          textColor={textColor}
           listEditor={Editor}
           listTransforms={Transforms}
           hlColor={hlColor}
           handleHlColor={handleHlColor.bind(this)}
         />
-        <Editable
-          renderElement={renderElement}
-          renderLeaf={renderLeaf}
-          onKeyDown={(event) => {
-            customOnKeyDown(onKeyDown(editor), event, editor);
+        <div
+          style={{
+            border: '1px solid gray',
+            padding: '0.5em',
+            borderRadius: '8px',
+            marginTop: '0.25em',
           }}
-        />
+        >
+          <Editable
+            renderElement={renderElement}
+            renderLeaf={renderLeaf}
+            onKeyDown={(event) => {
+              customOnKeyDown(onKeyDown(editor), event, editor);
+            }}
+          />
+        </div>
       </Slate>
     </>
   );

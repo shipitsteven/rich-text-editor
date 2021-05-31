@@ -27,6 +27,37 @@ const CustomEditor = {
     }
   },
 
+  isBlockActive(editor, format) {
+    const [match] = Editor.nodes(editor, {
+      match: (n) =>
+        !Editor.isEditor(n) && Element.isElement(n) && n.type === format,
+    });
+    return !!match;
+  },
+
+  toggleBlock(editor, format) {
+    const isActive = CustomEditor.isBlockActive(editor, format);
+    const LIST_TYPES = ['ol_list', 'ul_list'];
+    const isList = [LIST_TYPES].includes(format);
+
+    Transforms.unwrapNodes(editor, {
+      match: (n) =>
+        LIST_TYPES.includes(
+          !Editor.isEditor(n) && Element.isElement(n) && n.type
+        ),
+      split: true,
+    });
+    const newProperties = {
+      type: isActive ? 'paragraph' : isList ? 'list-item' : format,
+    };
+    Transforms.setNodes(editor, newProperties);
+
+    if (!isActive && isList) {
+      const block = { type: format, children: [] };
+      Transforms.wrapNodes(editor, block);
+    }
+  },
+
   isItalicMarkActive(editor) {
     const [match] = Editor.nodes(editor, {
       match: (n) => n.italic === true,
@@ -130,6 +161,11 @@ const CustomEditor = {
       { strikethrough: isActive ? null : true },
       { match: (n) => Text.isText(n), split: true }
     );
+  },
+
+  handleInsertLink(editor) {
+    const userInput = prompt('Enter a URL'); // prompt the user for a link
+    CustomEditor.insertLink(editor, userInput);
   },
 
   // Link specific logic

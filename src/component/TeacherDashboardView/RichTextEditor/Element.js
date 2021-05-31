@@ -55,6 +55,26 @@ const RightAligned = (props) => {
   return <p style={{ textAlign: 'right' }}>{props.children}</p>;
 };
 
+const Image = ({ attributes, children, element }) => {
+  const selected = useSelected();
+  const focused = useFocused();
+  return (
+    <div {...attributes}>
+      <div>
+        <img
+          src={element.url}
+          className="image-in-editor"
+          style={{
+            boxShadow: `${selected && focused ? '0 0 0 3px #B4D5FF' : 'none'}`,
+          }}
+          alt="placeholder"
+        />
+      </div>
+      {children}
+    </div>
+  );
+};
+
 export {
   CodeElement,
   MiddleAligned,
@@ -62,4 +82,5 @@ export {
   RightAligned,
   DefaultElement,
   Link,
+  Image,
 };

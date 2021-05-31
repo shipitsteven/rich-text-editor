@@ -8,24 +8,14 @@ import {
   MiddleAligned,
   LeftAligned,
   RightAligned,
+  Image,
 } from './Element';
 import Leaf from './Leaf';
 import Toolbar from './Toolbar';
 import withLinks from './plugin/withLinks';
+import withImages from './plugin/withImages';
 import { EditListPlugin } from '@productboard/slate-edit-list';
 import { customOnKeyDown } from './util/onKeyDown';
-import firebase from 'firebase/app';
-
-const firebaseConfig = {
-  apiKey: 'AIzaSyBNTkJXewdc-uGCHudyXnJxGB0I1QnZbRQ',
-  authDomain: 'rich-text-cb905.firebaseapp.com',
-  projectId: 'rich-text-cb905',
-  storageBucket: 'rich-text-cb905.appspot.com',
-  messagingSenderId: '840547243181',
-  appId: '1:840547243181:web:5beb56b5db7becafd56224',
-};
-
-firebase.initializeApp(firebaseConfig);
 
 const options = {}; // additional options
 
@@ -35,7 +25,10 @@ const [withEditList, onKeyDown, { Editor, Transforms }] =
 const RichTextEditor = () => {
   // withHistory tracks editor history, use Ctrl + Z for undo, Ctrl + Y for redo
   const editor = useMemo(
-    () => withEditList(withLinks(withHistory(withReact(createEditor())))),
+    () =>
+      withImages(
+        withEditList(withLinks(withHistory(withReact(createEditor()))))
+      ),
     []
   );
   // Add the initial value when setting up our state.
@@ -81,6 +74,8 @@ const RichTextEditor = () => {
         return <ol {...props.attributes}>{props.children}</ol>;
       case 'list_item':
         return <li {...props.attributes}>{props.children}</li>;
+      case 'image':
+        return <Image {...props} />;
       default:
         return <DefaultElement {...props} />;
     }

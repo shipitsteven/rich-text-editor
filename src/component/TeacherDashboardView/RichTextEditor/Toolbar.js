@@ -51,7 +51,7 @@ const Toolbar = ({
     if (snapshot.totalBytes) {
       setUploadStatus(true);
       getUploadProgress(
-        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        ((snapshot.bytesTransferred / snapshot.totalBytes) * 100).toPrecision(3)
       );
       if (snapshot.bytesTransferred === snapshot.totalBytes) {
         setTimeout(() => {
